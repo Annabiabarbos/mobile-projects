@@ -1,45 +1,51 @@
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import styled from "styled-components";
+import { Container } from './src/components/Container/Container';
+import { Title } from './src/components/Tittle/Title';
+import { ButtonI, ButtonD } from './src/components/Button/Button';
+import { TextButton } from './src/components/Button/TextButton';
 
 export default function App() {
-  const [count , setCount] = useState(0)
+
+
+  const [count, setCount] = useState(0)
 
   const increment = () => {
-    setCount (count + 1)
+    setCount(count + 1)
   }
 
   const decrement = () => {
-    setCount(count - 1) 
+    setCount(count - 1)
   }
 
   //effect 
 
- useEffect( () => {
-  console.warn(`Contador atualizado : ${count}`)
- }, [count])
+  useEffect(() => {
+    console.warn(`Contador atualizado : ${count}`)
+  }, [count])
 
 
   return (
-    <Container style={styles.container}>
+    <Container>
 
-      <Text style={styles.contador}>Contador: {count} </Text>
+      <Title>Contador: {count} </Title>
 
-      <TouchableOpacity onPress={increment}
-      style= {styles.btnI}
+      <ButtonI onPress={increment}
+      //style= {styles.btnI}
       >
-        <Text 
-        style={styles.textBtn}>Incrementar</Text>
-      </TouchableOpacity>
+        <TextButton
+        //style={styles.textBtn}
+        >Incrementar</TextButton>
+      </ButtonI>
 
-      <TouchableOpacity onPress={decrement}
-      style= {styles.btnD}
+      <ButtonD onPress={decrement}
+        style={styles.btnD}
       >
-       <Text
-        style={styles.textBtn}
-       >Decrementar</Text>
-      </TouchableOpacity>
+        <TextButton
+        //style={styles.textBtn}
+        >Decrementar</TextButton>
+      </ButtonD>
 
       <StatusBar style="auto" />
     </Container>
@@ -47,41 +53,5 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  /*container: {
-    flex: 1,
-    backgroundColor: '#DEE0D5',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },*/
-  btnI:{
-    
-    width: '50%',
-    height: 30,
-    marginTop: 50,
-    borderRadius: 10,
-    borderColor : 'white',
-    backgroundColor: '#E2AC48',
-    alignItems: 'center'
-  },
-
-  btnD:{
-    
-    width: '50%',
-    height: 30,
-    marginTop: 50,
-    borderRadius: 10,
-    borderColor: '#fff',
-    backgroundColor: '#983C2D',
-    alignItems: 'center'
-  },
-  
-  textBtn:{
-    color: 'white'
-  },
-
-  contador:{
-    fontSize: 16,
-    //color: 'white'
-  }
-
-});
+ 
+  });
