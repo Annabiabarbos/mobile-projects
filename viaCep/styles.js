@@ -1,6 +1,6 @@
-import styled from "styled-components";
+import styled from "styled-components/native";
 
-//component container app 
+//Componente Container App
 export const ContainerApp = styled.View`
-flex: 1;
+  flex: 1;
 `
