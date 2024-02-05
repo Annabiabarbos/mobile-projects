@@ -2,6 +2,7 @@ import { Input } from "../Input";
 import { Label } from "../Label";
 import { FieldContent } from "./style";
 
+
 export const BoxInput = ({
   textLabel,
   placeholder,
@@ -11,8 +12,8 @@ export const BoxInput = ({
   onChangeText=null,
   keyType = 'default',
   maxLength,
-  minLength,
   keyboardType = 'default',
+  onBlur = null,
 }) => {
   return(
     //FieldContent
@@ -23,10 +24,10 @@ export const BoxInput = ({
         editable={editable}
         keyType={keyType}
         maxLength={maxLength}
-        minLength={minLength}
         fieldValue={fieldValue}
         onChangeText={onChangeText}
         keyboardType={keyboardType}
+        onBlur = {onBlur}
         
       />
     </FieldContent>
