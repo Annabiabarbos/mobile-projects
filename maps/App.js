@@ -2,20 +2,26 @@ import {
   requestForegroundPermissionsAsync, //solicita acesso a localização atual do dispositivo
   getCurrentPositionAsync, // recebe a localização atual do dispositivo 
 
+  watchPositionAsync, //monitorar o posicionamento
+  LocationAccuracy  //pega 
 } from 'expo-location'
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
 // importando dependencia do mapa
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
-import {mapsKey, mapskey} from "./utils/MapsApiKey"
+import { mapsKey, mapskey } from "./utils/MapsApiKey"
 
 import MapViewDirections from 'react-native-maps-directions';
 
 export default function App() {
-
+  const mapReference = useRef(null)
   const [initialPosition, setInitialPosition] = useState(null)
+  const [finalPosition, setFinalPosition] = useState({
+    latitude: -23.6700,
+    longitude: -46.4486
+  })
 
   async function CapturarLocalizacao() {
     const { granted } = await requestForegroundPermissionsAsync()
@@ -30,7 +36,44 @@ export default function App() {
 
   useEffect(() => {
     CapturarLocalizacao()
-  }, [100])
+
+    //monitora em tempo real 
+    watchPositionAsync({
+      accuracy: LocationAccuracy.Highest,
+      timeInterval: 1000,
+      distanceInterval: 1
+    }, async (Response) => {
+      //recebe e guarda a nova localizacao
+      await setInitialPosition(Response)
+
+      mapReference.current?. animateCamera({
+        pitch: 60, //tempo
+        center: Response.coords 
+      })
+
+
+      console.log(Response);
+    })
+
+  }, [1000])
+
+  useEffect(() => {
+    RecarregarVisualizacaoMapa()
+  }, [initialPosition])
+
+
+  async function RecarregarVisualizacaoMapa() {
+    if (mapReference.current && initialPosition) {
+      await mapReference.current.fitToCoordinates(
+        [{ latitude: initialPosition.coords.latitude, longitude: initialPosition.coords.longitude },
+        { latitude: finalPosition.latitude, longitude: finalPosition.longitude }
+        ], {
+        edgePadding: { top: 60, right: 60, bottom: 60, left: 60 },
+        animated: true
+      }
+      )
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -41,11 +84,14 @@ export default function App() {
 
         <>
           <MapView
+
+            ref={mapReference}
+
             initialRegion={{
               latitude: initialPosition.coords.latitude,
               longitude: initialPosition.coords.longitude,
-              latitudeDelta: 0.0050,
-              longitudeDelta: 0.0050,
+              latitudeDelta: 0.5,
+              longitudeDelta: 0.5,
             }}
             provider={PROVIDER_GOOGLE}
             customMapStyle={grayMapStyle}
@@ -63,28 +109,28 @@ export default function App() {
             />
 
 
-            <MapViewDirections 
-            
-            origin={initialPosition.coords}
-            destination={
-              {
-                latitude: -23.6700, 
-                longitude: -46.4486, 
-                latitudeDelta: 0.0050,
-                longitudeDelta: 0.0050,
-              }}
-            
-            apikey={mapskey}
-            strokeWidth={5}
-            strokeColor={'#499bba'}
-            
+            <MapViewDirections
+
+              origin={initialPosition.coords}
+              destination={
+                {
+                  latitude: -23.6700,
+                  longitude: -46.4486,
+                  latitudeDelta: 0.0050,
+                  longitudeDelta: 0.0050,
+                }}
+
+              apikey={mapskey}
+              strokeWidth={5}
+              strokeColor={'#499bba'}
+
             />
 
             <Marker
 
               coordinate={{
-                latitude: -23.6700, 
-                longitude: -46.4486, 
+                latitude: -23.6700,
+                longitude: -46.4486,
               }}
               title='Local de destino'
               description='Posição final'
@@ -115,6 +161,7 @@ const styles = StyleSheet.create({
     width: "100%"
   },
 });
+
 
 const grayMapStyle = [
   {
